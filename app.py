@@ -1,9 +1,6 @@
 import streamlit as st
-import cv2
 import numpy as np
 from PIL import Image
-from io import BytesIO
-import pandas as pd
 
 
 # ============================================================
@@ -25,22 +22,16 @@ st.set_page_config(
 st.markdown("""
 <style>
 
-/* ---------- MAIN BACKGROUND ---------- */
-
 .stApp {
     background: #f5f8fc;
     color: #172033;
 }
-
-/* ---------- MAIN CONTAINER ---------- */
 
 .block-container {
     padding-top: 2rem;
     padding-bottom: 3rem;
     max-width: 1400px;
 }
-
-/* ---------- ALL NORMAL TEXT ---------- */
 
 .stApp p,
 .stApp span,
@@ -49,8 +40,6 @@ st.markdown("""
 .stApp small {
     color: #172033 !important;
 }
-
-/* ---------- HEADINGS ---------- */
 
 .stApp h1,
 .stApp h2,
@@ -61,8 +50,6 @@ st.markdown("""
     color: #102a43 !important;
 }
 
-/* ---------- MAIN TITLE ---------- */
-
 .main-title {
     text-align: center;
     font-size: 42px;
@@ -71,16 +58,12 @@ st.markdown("""
     margin-bottom: 5px;
 }
 
-/* ---------- SUBTITLE ---------- */
-
 .subtitle {
     text-align: center;
     font-size: 18px;
     color: #486581 !important;
     margin-bottom: 30px;
 }
-
-/* ---------- SECTION TITLE ---------- */
 
 .section-title {
     font-size: 28px;
@@ -90,17 +73,13 @@ st.markdown("""
     margin-bottom: 15px;
 }
 
-/* ---------- TECHNOLOGY CARDS ---------- */
-
 .tech-card {
     background: #ffffff;
     border: 1px solid #d9e2ec;
     border-radius: 16px;
     padding: 22px;
     min-height: 180px;
-
     box-shadow: 0 5px 18px rgba(31, 45, 61, 0.08);
-
     transition: 0.2s ease;
 }
 
@@ -127,8 +106,6 @@ st.markdown("""
     line-height: 1.6;
 }
 
-/* ---------- RESULT CARD ---------- */
-
 .result-card {
     background: #ffffff;
     border: 1px solid #d9e2ec;
@@ -136,23 +113,8 @@ st.markdown("""
     padding: 18px;
     margin-top: 12px;
     margin-bottom: 12px;
-
     box-shadow: 0 4px 15px rgba(31, 45, 61, 0.07);
 }
-
-.result-title {
-    font-size: 17px;
-    font-weight: 700;
-    color: #243b53 !important;
-}
-
-.result-value {
-    font-size: 25px;
-    font-weight: 800;
-    color: #1976d2 !important;
-}
-
-/* ---------- INFO BOX ---------- */
 
 .info-box {
     background: #eaf4ff;
@@ -167,8 +129,6 @@ st.markdown("""
     color: #17324d !important;
 }
 
-/* ---------- SUCCESS BOX ---------- */
-
 .success-box {
     background: #eafaf1;
     border-left: 5px solid #16a34a;
@@ -181,19 +141,14 @@ st.markdown("""
     color: #14532d !important;
 }
 
-/* ---------- BUTTON ---------- */
-
 .stButton > button {
     width: 100%;
     border-radius: 9px;
     border: none;
-
     background: #1976d2;
     color: white !important;
-
     font-weight: 700;
     padding: 10px;
-
     box-shadow: 0 4px 10px rgba(25, 118, 210, 0.18);
 }
 
@@ -201,8 +156,6 @@ st.markdown("""
     background: #125ea8;
     color: white !important;
 }
-
-/* ---------- SIDEBAR ---------- */
 
 section[data-testid="stSidebar"] {
     background: #ffffff;
@@ -213,15 +166,11 @@ section[data-testid="stSidebar"] * {
     color: #172033 !important;
 }
 
-/* ---------- SIDEBAR TITLE ---------- */
-
 .sidebar-title {
     font-size: 24px;
     font-weight: 800;
     color: #123b68 !important;
 }
-
-/* ---------- FILE UPLOADER ---------- */
 
 [data-testid="stFileUploader"] {
     background: #ffffff;
@@ -230,26 +179,14 @@ section[data-testid="stSidebar"] * {
     padding: 10px;
 }
 
-/* ---------- SELECT BOX ---------- */
-
 [data-testid="stSelectbox"] {
     background: #ffffff;
     border-radius: 10px;
 }
 
-/* ---------- SELECT BOX TEXT ---------- */
-
 [data-baseweb="select"] * {
     color: #172033 !important;
 }
-
-/* ---------- SLIDER ---------- */
-
-[data-testid="stSlider"] * {
-    color: #172033 !important;
-}
-
-/* ---------- TABS ---------- */
 
 button[data-baseweb="tab"] {
     color: #486581 !important;
@@ -260,8 +197,6 @@ button[data-baseweb="tab"][aria-selected="true"] {
     color: #1976d2 !important;
 }
 
-/* ---------- EXPANDER ---------- */
-
 [data-testid="stExpander"] {
     background: #ffffff;
     border: 1px solid #d9e2ec;
@@ -271,8 +206,6 @@ button[data-baseweb="tab"][aria-selected="true"] {
 [data-testid="stExpander"] * {
     color: #172033 !important;
 }
-
-/* ---------- METRIC ---------- */
 
 [data-testid="stMetric"] {
     background: #ffffff;
@@ -289,22 +222,10 @@ button[data-baseweb="tab"][aria-selected="true"] {
     color: #123b68 !important;
 }
 
-/* ---------- CAPTION ---------- */
-
 [data-testid="stCaptionContainer"],
 [data-testid="stCaptionContainer"] * {
     color: #627d98 !important;
 }
-
-/* ---------- ALERTS ---------- */
-
-[data-testid="stAlert"] p,
-[data-testid="stAlert"] span,
-[data-testid="stAlert"] div {
-    color: #172033 !important;
-}
-
-/* ---------- DIVIDER ---------- */
 
 hr {
     border-color: #d9e2ec;
@@ -321,10 +242,6 @@ hr {
 def image_to_array(image_file):
     image = Image.open(image_file).convert("RGB")
     return np.array(image)
-
-
-def array_to_pil(image_array):
-    return Image.fromarray(image_array)
 
 
 def cosine_similarity(a, b):
@@ -346,10 +263,14 @@ def cosine_similarity(a, b):
 @st.cache_resource
 def load_haar_cascade():
 
+    # IMPORTANT:
+    # OpenCV is imported only when Viola-Jones is used.
+    import cv2
+
     if not hasattr(cv2, "CascadeClassifier"):
         raise RuntimeError(
-            "OpenCV installation problem: CascadeClassifier is not available. "
-            "Please reinstall opencv-python."
+            "OpenCV installation problem: "
+            "CascadeClassifier is not available."
         )
 
     cascade_path = (
@@ -606,14 +527,14 @@ with tab2:
             st.image(
                 main_image,
                 caption="Main Image",
-                use_container_width=True
+                width="stretch"
             )
 
         with c2:
             st.image(
                 template_image,
                 caption="Template Image",
-                use_container_width=True
+                width="stretch"
             )
 
         if st.button(
@@ -621,67 +542,79 @@ with tab2:
             key="template_button"
         ):
 
-            main_gray = cv2.cvtColor(
-                main_image,
-                cv2.COLOR_RGB2GRAY
-            )
+            try:
 
-            template_gray = cv2.cvtColor(
-                template_image,
-                cv2.COLOR_RGB2GRAY
-            )
+                import cv2
 
-            th, tw = template_gray.shape[:2]
+                main_gray = cv2.cvtColor(
+                    main_image,
+                    cv2.COLOR_RGB2GRAY
+                )
 
-            if (
-                th > main_gray.shape[0]
-                or tw > main_gray.shape[1]
-            ):
+                template_gray = cv2.cvtColor(
+                    template_image,
+                    cv2.COLOR_RGB2GRAY
+                )
+
+                th, tw = template_gray.shape[:2]
+
+                if (
+                    th > main_gray.shape[0]
+                    or tw > main_gray.shape[1]
+                ):
+                    st.error(
+                        "Template image must be smaller than the main image."
+                    )
+
+                else:
+
+                    result = cv2.matchTemplate(
+                        main_gray,
+                        template_gray,
+                        cv2.TM_CCOEFF_NORMED
+                    )
+
+                    _, max_val, _, max_loc = cv2.minMaxLoc(result)
+
+                    top_left = max_loc
+
+                    bottom_right = (
+                        top_left[0] + tw,
+                        top_left[1] + th
+                    )
+
+                    output = main_image.copy()
+
+                    cv2.rectangle(
+                        output,
+                        top_left,
+                        bottom_right,
+                        (255, 0, 0),
+                        3
+                    )
+
+                    st.markdown(
+                        '<div class="success-box">'
+                        '<b>Template Found Successfully!</b>'
+                        '</div>',
+                        unsafe_allow_html=True
+                    )
+
+                    st.image(
+                        output,
+                        caption="Template Matching Result",
+                        width="stretch"
+                    )
+
+                    st.metric(
+                        "Matching Score",
+                        f"{max_val:.2%}"
+                    )
+
+            except Exception as e:
+
                 st.error(
-                    "Template image must be smaller than the main image."
-                )
-            else:
-
-                result = cv2.matchTemplate(
-                    main_gray,
-                    template_gray,
-                    cv2.TM_CCOEFF_NORMED
-                )
-
-                _, max_val, _, max_loc = cv2.minMaxLoc(result)
-
-                top_left = max_loc
-                bottom_right = (
-                    top_left[0] + tw,
-                    top_left[1] + th
-                )
-
-                output = main_image.copy()
-
-                cv2.rectangle(
-                    output,
-                    top_left,
-                    bottom_right,
-                    (255, 0, 0),
-                    3
-                )
-
-                st.markdown(
-                    '<div class="success-box">'
-                    '<b>Template Found Successfully!</b>'
-                    '</div>',
-                    unsafe_allow_html=True
-                )
-
-                st.image(
-                    output,
-                    caption="Template Matching Result",
-                    use_container_width=True
-                )
-
-                st.metric(
-                    "Matching Score",
-                    f"{max_val:.2%}"
+                    f"Template Matching failed: {e}"
                 )
 
 
@@ -719,7 +652,7 @@ with tab3:
         st.image(
             image,
             caption="Original Image",
-            use_container_width=True
+            width="stretch"
         )
 
         if st.button(
@@ -728,6 +661,8 @@ with tab3:
         ):
 
             try:
+
+                import cv2
 
                 cascade = load_haar_cascade()
 
@@ -783,18 +718,13 @@ with tab3:
                 st.image(
                     result,
                     caption="Viola-Jones Detection Result",
-                    use_container_width=True
+                    width="stretch"
                 )
 
             except Exception as e:
 
                 st.error(
                     f"Viola-Jones could not start: {e}"
-                )
-
-                st.info(
-                    "If you see 'CascadeClassifier is not available', "
-                    "reinstall opencv-python."
                 )
 
 
@@ -814,7 +744,7 @@ with tab4:
         <div class="info-box">
         <b>DeepFace</b> is a deep-learning framework for
         facial analysis. It can perform face recognition,
-        age, gender, emotion and race analysis.
+        age, gender and emotion analysis.
         </div>
         """,
         unsafe_allow_html=True
@@ -833,7 +763,7 @@ with tab4:
         st.image(
             image,
             caption="Uploaded Face",
-            use_container_width=True
+            width="stretch"
         )
 
         if st.button(
@@ -844,6 +774,7 @@ with tab4:
             try:
 
                 from deepface import DeepFace
+                import cv2
 
                 image_bytes = deepface_file.getvalue()
 
@@ -872,11 +803,8 @@ with tab4:
                     )
 
                 if isinstance(result, list):
-
                     analysis = result[0]
-
                 else:
-
                     analysis = result
 
                 st.markdown("### 📊 Analysis Result")
@@ -975,14 +903,14 @@ with tab5:
             st.image(
                 image1,
                 caption="Face 1",
-                use_container_width=True
+                width="stretch"
             )
 
         with c2:
             st.image(
                 image2,
                 caption="Face 2",
-                use_container_width=True
+                width="stretch"
             )
 
         if st.button(
@@ -998,11 +926,9 @@ with tab5:
 
                     embedder = load_facenet()
 
-                    # Convert RGB images to uint8
                     img1 = image1.astype(np.uint8)
                     img2 = image2.astype(np.uint8)
 
-                    # FaceNet expects image arrays
                     emb1 = embedder.embeddings(
                         np.expand_dims(img1, axis=0)
                     )[0]
