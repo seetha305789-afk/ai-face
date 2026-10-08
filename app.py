@@ -839,11 +839,42 @@ with tab4:
                         )
                     )
 
+                # ====================================================
+                # COMPLETE ANALYSIS - CLEAN JSON
+                # ====================================================
+
                 with st.expander(
                     "📋 View Complete Analysis"
                 ):
 
-                    st.json(analysis)
+                    def make_json_safe(obj):
+
+                        if isinstance(obj, dict):
+                            return {
+                                str(key): make_json_safe(value)
+                                for key, value in obj.items()
+                            }
+
+                        if isinstance(obj, (list, tuple)):
+                            return [
+                                make_json_safe(value)
+                                for value in obj
+                            ]
+
+                        if isinstance(obj, np.ndarray):
+                            return obj.tolist()
+
+                        if isinstance(obj, np.generic):
+                            return obj.item()
+
+                        return obj
+
+                    clean_analysis = make_json_safe(analysis)
+
+                    st.json(
+                        clean_analysis,
+                        expanded=True
+                    )
 
             except Exception as e:
 
