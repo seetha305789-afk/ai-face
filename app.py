@@ -2,535 +2,262 @@ import streamlit as st
 import numpy as np
 from PIL import Image
 
-
-# ============================================================
-# PAGE CONFIGURATION
-# ============================================================
+# =========================================================
+# PAGE CONFIG
+# =========================================================
 
 st.set_page_config(
     page_title="AI Face Studio",
     page_icon="🤖",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
-
-# ============================================================
-# LIGHT PROFESSIONAL THEME
-# ============================================================
+# =========================================================
+# CUSTOM CSS
+# =========================================================
 
 st.markdown("""
 <style>
 
-.stApp {
-    background: #f5f8fc;
-    color: #172033;
+.main {
+    background-color: #f8f9fa;
 }
 
-.block-container {
-    padding-top: 2rem;
-    padding-bottom: 3rem;
-    max-width: 1400px;
+h1 {
+    color: #222222;
 }
 
-.stApp p,
-.stApp span,
-.stApp label,
-.stApp li,
-.stApp small {
-    color: #172033 !important;
-}
-
-.stApp h1,
-.stApp h2,
-.stApp h3,
-.stApp h4,
-.stApp h5,
-.stApp h6 {
-    color: #102a43 !important;
-}
-
-.main-title {
-    text-align: center;
-    font-size: 42px;
-    font-weight: 800;
-    color: #123b68 !important;
-    margin-bottom: 5px;
-}
-
-.subtitle {
-    text-align: center;
-    font-size: 18px;
-    color: #486581 !important;
-    margin-bottom: 30px;
-}
-
-.section-title {
-    font-size: 28px;
-    font-weight: 750;
-    color: #123b68 !important;
-    margin-top: 15px;
-    margin-bottom: 15px;
-}
-
-.tech-card {
-    background: #ffffff;
-    border: 1px solid #d9e2ec;
-    border-radius: 16px;
-    padding: 22px;
-    min-height: 180px;
-    box-shadow: 0 5px 18px rgba(31, 45, 61, 0.08);
-    transition: 0.2s ease;
-}
-
-.tech-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 25px rgba(31, 45, 61, 0.14);
-}
-
-.tech-icon {
-    font-size: 35px;
-}
-
-.tech-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: #123b68 !important;
-    margin-top: 8px;
-    margin-bottom: 8px;
-}
-
-.tech-text {
-    font-size: 14px;
-    color: #486581 !important;
-    line-height: 1.6;
-}
-
-.result-card {
-    background: #ffffff;
-    border: 1px solid #d9e2ec;
-    border-radius: 14px;
-    padding: 18px;
-    margin-top: 12px;
-    margin-bottom: 12px;
-    box-shadow: 0 4px 15px rgba(31, 45, 61, 0.07);
-}
-
-.info-box {
-    background: #eaf4ff;
-    border-left: 5px solid #1976d2;
-    border-radius: 10px;
-    padding: 15px;
-    margin: 15px 0;
-    color: #17324d !important;
-}
-
-.info-box * {
-    color: #17324d !important;
-}
-
-.success-box {
-    background: #eafaf1;
-    border-left: 5px solid #16a34a;
-    border-radius: 10px;
-    padding: 15px;
-    margin: 15px 0;
-}
-
-.success-box * {
-    color: #14532d !important;
+h2, h3 {
+    color: #333333;
 }
 
 .stButton > button {
     width: 100%;
-    border-radius: 9px;
-    border: none;
-    background: #1976d2;
-    color: white !important;
-    font-weight: 700;
-    padding: 10px;
-    box-shadow: 0 4px 10px rgba(25, 118, 210, 0.18);
+    border-radius: 8px;
+    font-weight: 600;
 }
 
-.stButton > button:hover {
-    background: #125ea8;
-    color: white !important;
-}
-
-section[data-testid="stSidebar"] {
-    background: #ffffff;
-    border-right: 1px solid #d9e2ec;
-}
-
-section[data-testid="stSidebar"] * {
-    color: #172033 !important;
-}
-
-.sidebar-title {
-    font-size: 24px;
-    font-weight: 800;
-    color: #123b68 !important;
-}
-
-[data-testid="stFileUploader"] {
-    background: #ffffff;
-    border: 1px solid #d9e2ec;
+.analysis-box {
+    background-color: white;
+    color: #222222;
+    padding: 20px;
     border-radius: 12px;
-    padding: 10px;
+    border: 1px solid #dddddd;
+    margin-top: 15px;
 }
 
-[data-testid="stSelectbox"] {
-    background: #ffffff;
-    border-radius: 10px;
+.analysis-box h3 {
+    color: #222222 !important;
 }
 
-[data-baseweb="select"] * {
-    color: #172033 !important;
-}
-
-button[data-baseweb="tab"] {
-    color: #486581 !important;
-    font-weight: 700;
-}
-
-button[data-baseweb="tab"][aria-selected="true"] {
-    color: #1976d2 !important;
-}
-
-[data-testid="stExpander"] {
-    background: #ffffff;
-    border: 1px solid #d9e2ec;
-    border-radius: 12px;
-}
-
-[data-testid="stExpander"] * {
-    color: #172033 !important;
-}
-
-[data-testid="stMetric"] {
-    background: #ffffff;
-    border: 1px solid #d9e2ec;
-    border-radius: 12px;
-    padding: 12px;
-}
-
-[data-testid="stMetricLabel"] * {
-    color: #486581 !important;
-}
-
-[data-testid="stMetricValue"] * {
-    color: #123b68 !important;
-}
-
-[data-testid="stCaptionContainer"],
-[data-testid="stCaptionContainer"] * {
-    color: #627d98 !important;
-}
-
-hr {
-    border-color: #d9e2ec;
+.analysis-item {
+    color: #222222 !important;
+    font-size: 16px;
+    margin: 7px 0;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-
-# ============================================================
+# =========================================================
 # HELPER FUNCTIONS
-# ============================================================
+# =========================================================
 
-def image_to_array(image_file):
-    image = Image.open(image_file).convert("RGB")
+def image_to_array(image):
     return np.array(image)
 
 
 def cosine_similarity(a, b):
-    a = np.asarray(a).flatten()
-    b = np.asarray(b).flatten()
+    a = np.array(a)
+    b = np.array(b)
 
-    denominator = np.linalg.norm(a) * np.linalg.norm(b)
-
-    if denominator == 0:
-        return 0.0
-
-    return float(np.dot(a, b) / denominator)
-
-
-# ============================================================
-# VIOLA-JONES MODEL
-# ============================================================
-
-@st.cache_resource
-def load_haar_cascade():
-
-    # IMPORTANT:
-    # OpenCV is imported only when Viola-Jones is used.
-    import cv2
-
-    if not hasattr(cv2, "CascadeClassifier"):
-        raise RuntimeError(
-            "OpenCV installation problem: "
-            "CascadeClassifier is not available."
-        )
-
-    cascade_path = (
-        cv2.data.haarcascades
-        + "haarcascade_frontalface_default.xml"
+    return np.dot(a, b) / (
+        np.linalg.norm(a) * np.linalg.norm(b)
     )
 
-    cascade = cv2.CascadeClassifier(cascade_path)
 
-    if cascade.empty():
-        raise RuntimeError(
-            "Could not load Viola-Jones Haar Cascade."
-        )
+def load_haar_cascade():
+    try:
+        import cv2
 
-    return cascade
+        if not hasattr(cv2, "CascadeClassifier"):
+            raise RuntimeError(
+                "OpenCV installation problem: "
+                "CascadeClassifier is not available."
+            )
+
+        cascade_path = cv2.data.haarcascades + \
+            "haarcascade_frontalface_default.xml"
+
+        cascade = cv2.CascadeClassifier(cascade_path)
+
+        if cascade.empty():
+            raise RuntimeError(
+                "Haar Cascade file could not be loaded."
+            )
+
+        return cv2, cascade
+
+    except Exception as e:
+        raise RuntimeError(str(e))
 
 
-# ============================================================
-# FACENET MODEL
-# ============================================================
-
-@st.cache_resource
 def load_facenet():
-
     from keras_facenet import FaceNet
 
     return FaceNet()
 
 
-# ============================================================
+def make_json_safe(obj):
+
+    if isinstance(obj, dict):
+        return {
+            str(key): make_json_safe(value)
+            for key, value in obj.items()
+        }
+
+    if isinstance(obj, (list, tuple)):
+        return [
+            make_json_safe(value)
+            for value in obj
+        ]
+
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+
+    if isinstance(obj, np.generic):
+        return obj.item()
+
+    return obj
+
+
+# =========================================================
 # HEADER
-# ============================================================
+# =========================================================
 
-st.markdown(
-    '<div class="main-title">🤖 AI Face Detection & Recognition Studio</div>',
-    unsafe_allow_html=True
+st.title("🤖 AI Face Detection & Recognition Studio")
+
+st.write(
+    "Template Matching • Viola-Jones • DeepFace • FaceNet"
 )
 
-st.markdown(
-    '<div class="subtitle">'
-    'Template Matching • Viola-Jones • DeepFace • FaceNet'
-    '</div>',
-    unsafe_allow_html=True
-)
+st.divider()
 
-
-# ============================================================
-# SIDEBAR
-# ============================================================
-
-with st.sidebar:
-
-    st.markdown(
-        '<div class="sidebar-title">⚙️ Control Panel</div>',
-        unsafe_allow_html=True
-    )
-
-    st.markdown("---")
-
-    st.info(
-        """
-        **IVA Assignment**
-
-        This application demonstrates four
-        important Image & Video Analytics
-        techniques:
-
-        • Template Matching  
-        • Viola-Jones  
-        • DeepFace  
-        • FaceNet
-        """
-    )
-
-    st.markdown("---")
-
-    st.write("### 📌 Quick Navigation")
-
-    st.write("🏠 Overview")
-    st.write("🎯 Template Matching")
-    st.write("👁️ Viola-Jones")
-    st.write("🧠 DeepFace")
-    st.write("🔐 FaceNet")
-
-
-# ============================================================
+# =========================================================
 # TABS
-# ============================================================
+# =========================================================
 
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "🏠 Overview",
     "🎯 Template Matching",
     "👁️ Viola-Jones",
     "🧠 DeepFace",
-    "🔐 FaceNet"
+    "🔍 FaceNet"
 ])
 
 
-# ============================================================
+# =========================================================
 # TAB 1 - OVERVIEW
-# ============================================================
+# =========================================================
 
 with tab1:
 
-    st.markdown(
-        '<div class="section-title">📚 Image & Video Analytics</div>',
-        unsafe_allow_html=True
-    )
+    st.header("AI Face Detection & Recognition")
 
-    st.markdown(
+    st.write(
         """
-        <div class="info-box">
-        <b>Image and Video Analytics (IVA)</b> uses computer vision
-        and artificial intelligence techniques to understand
-        images and videos automatically.
-        </div>
-        """,
-        unsafe_allow_html=True
+        This application demonstrates different Image and Video
+        Analytics techniques for face detection and recognition.
+        """
     )
-
-    st.markdown("### 🔬 Technologies Used")
 
     col1, col2 = st.columns(2)
 
     with col1:
 
-        st.markdown(
-            """
-            <div class="tech-card">
-                <div class="tech-icon">🎯</div>
-                <div class="tech-title">Template Matching</div>
-                <div class="tech-text">
-                    Finds a small template image inside a larger image
-                    using OpenCV template matching.
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        st.subheader("🎯 Template Matching")
 
-        st.write("")
-
-        st.markdown(
+        st.write(
             """
-            <div class="tech-card">
-                <div class="tech-icon">👁️</div>
-                <div class="tech-title">Viola-Jones</div>
-                <div class="tech-text">
-                    A classical object detection algorithm that uses
-                    Haar-like features and a cascade classifier.
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
+            Template Matching compares a template image with
+            another image to find similar regions.
+            """
         )
 
     with col2:
 
-        st.markdown(
+        st.subheader("👁️ Viola-Jones")
+
+        st.write(
             """
-            <div class="tech-card">
-                <div class="tech-icon">🧠</div>
-                <div class="tech-title">DeepFace</div>
-                <div class="tech-text">
-                    A deep-learning based facial analysis framework
-                    for face recognition and attribute analysis.
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
+            Viola-Jones is a classical object detection algorithm
+            commonly used for face detection.
+            """
         )
 
-        st.write("")
+    col3, col4 = st.columns(2)
 
-        st.markdown(
+    with col3:
+
+        st.subheader("🧠 DeepFace")
+
+        st.write(
             """
-            <div class="tech-card">
-                <div class="tech-icon">🔐</div>
-                <div class="tech-title">FaceNet</div>
-                <div class="tech-text">
-                    Converts faces into numerical embeddings that
-                    can be compared for face similarity.
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
+            DeepFace can analyze faces for age, gender and emotion.
+            """
         )
 
-    st.markdown("---")
+    with col4:
 
-    st.markdown("### 📊 Application Areas")
+        st.subheader("🔍 FaceNet")
 
-    c1, c2, c3, c4 = st.columns(4)
+        st.write(
+            """
+            FaceNet generates face embeddings and can be used
+            for face similarity and recognition.
+            """
+        )
 
-    c1.metric("Technology", "Computer Vision")
-    c2.metric("Domain", "IVA")
-    c3.metric("Recognition", "Face AI")
-    c4.metric("Platform", "Python")
 
-
-# ============================================================
+# =========================================================
 # TAB 2 - TEMPLATE MATCHING
-# ============================================================
+# =========================================================
 
 with tab2:
 
-    st.markdown(
-        '<div class="section-title">🎯 Template Matching</div>',
-        unsafe_allow_html=True
+    st.header("🎯 Template Matching")
+
+    st.write(
+        "Upload a main image and a template image."
     )
 
-    st.markdown(
-        """
-        <div class="info-box">
-        <b>Template Matching</b> searches for a smaller image
-        (template) inside a larger image.
-        </div>
-        """,
-        unsafe_allow_html=True
+    image_file = st.file_uploader(
+        "Upload Main Image",
+        type=["jpg", "jpeg", "png"],
+        key="template_main"
     )
 
-    col1, col2 = st.columns(2)
+    template_file = st.file_uploader(
+        "Upload Template Image",
+        type=["jpg", "jpeg", "png"],
+        key="template"
+    )
 
-    with col1:
+    if image_file and template_file:
 
-        st.markdown("### 🖼️ Upload Main Image")
+        main_image = Image.open(image_file)
+        template_image = Image.open(template_file)
 
-        main_file = st.file_uploader(
-            "Choose main image",
-            type=["jpg", "jpeg", "png"],
-            key="template_main"
-        )
+        col1, col2 = st.columns(2)
 
-    with col2:
-
-        st.markdown("### 🔎 Upload Template")
-
-        template_file = st.file_uploader(
-            "Choose template image",
-            type=["jpg", "jpeg", "png"],
-            key="template_file"
-        )
-
-    if main_file and template_file:
-
-        main_image = image_to_array(main_file)
-        template_image = image_to_array(template_file)
-
-        st.markdown("### 📷 Input Images")
-
-        c1, c2 = st.columns(2)
-
-        with c1:
+        with col1:
             st.image(
                 main_image,
                 caption="Main Image",
                 width="stretch"
             )
 
-        with c2:
+        with col2:
             st.image(
                 template_image,
                 caption="Template Image",
@@ -538,7 +265,7 @@ with tab2:
             )
 
         if st.button(
-            "🔍 Find Template",
+            "Run Template Matching",
             key="template_button"
         ):
 
@@ -546,70 +273,46 @@ with tab2:
 
                 import cv2
 
+                main_array = image_to_array(
+                    main_image.convert("RGB")
+                )
+
+                template_array = image_to_array(
+                    template_image.convert("RGB")
+                )
+
                 main_gray = cv2.cvtColor(
-                    main_image,
+                    main_array,
                     cv2.COLOR_RGB2GRAY
                 )
 
                 template_gray = cv2.cvtColor(
-                    template_image,
+                    template_array,
                     cv2.COLOR_RGB2GRAY
                 )
 
-                th, tw = template_gray.shape[:2]
+                result = cv2.matchTemplate(
+                    main_gray,
+                    template_gray,
+                    cv2.TM_CCOEFF_NORMED
+                )
 
-                if (
-                    th > main_gray.shape[0]
-                    or tw > main_gray.shape[1]
-                ):
-                    st.error(
-                        "Template image must be smaller than the main image."
-                    )
+                _, max_val, _, max_loc = cv2.minMaxLoc(
+                    result
+                )
 
-                else:
+                st.success(
+                    f"Template matching completed!"
+                )
 
-                    result = cv2.matchTemplate(
-                        main_gray,
-                        template_gray,
-                        cv2.TM_CCOEFF_NORMED
-                    )
+                st.metric(
+                    "Similarity Score",
+                    f"{max_val * 100:.2f}%"
+                )
 
-                    _, max_val, _, max_loc = cv2.minMaxLoc(result)
-
-                    top_left = max_loc
-
-                    bottom_right = (
-                        top_left[0] + tw,
-                        top_left[1] + th
-                    )
-
-                    output = main_image.copy()
-
-                    cv2.rectangle(
-                        output,
-                        top_left,
-                        bottom_right,
-                        (255, 0, 0),
-                        3
-                    )
-
-                    st.markdown(
-                        '<div class="success-box">'
-                        '<b>Template Found Successfully!</b>'
-                        '</div>',
-                        unsafe_allow_html=True
-                    )
-
-                    st.image(
-                        output,
-                        caption="Template Matching Result",
-                        width="stretch"
-                    )
-
-                    st.metric(
-                        "Matching Score",
-                        f"{max_val:.2%}"
-                    )
+                st.write(
+                    f"Best Match Location: {max_loc}"
+                )
 
             except Exception as e:
 
@@ -618,106 +321,80 @@ with tab2:
                 )
 
 
-# ============================================================
+# =========================================================
 # TAB 3 - VIOLA-JONES
-# ============================================================
+# =========================================================
 
 with tab3:
 
-    st.markdown(
-        '<div class="section-title">👁️ Viola-Jones Face Detection</div>',
-        unsafe_allow_html=True
-    )
+    st.header("👁️ Viola-Jones Face Detection")
 
-    st.markdown(
-        """
-        <div class="info-box">
-        <b>Viola-Jones</b> is a classical real-time object detection
-        algorithm commonly used for face detection.
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    image_file = st.file_uploader(
-        "📤 Upload an image",
+    uploaded_file = st.file_uploader(
+        "Upload an image",
         type=["jpg", "jpeg", "png"],
         key="viola_image"
     )
 
-    if image_file:
+    if uploaded_file:
 
-        image = image_to_array(image_file)
+        image = Image.open(uploaded_file).convert("RGB")
 
         st.image(
             image,
-            caption="Original Image",
+            caption="Uploaded Image",
             width="stretch"
         )
 
         if st.button(
-            "👁️ Detect Faces",
+            "Detect Faces",
             key="viola_button"
         ):
 
             try:
 
-                import cv2
+                cv2, face_cascade = load_haar_cascade()
 
-                cascade = load_haar_cascade()
+                image_array = np.array(image)
 
                 gray = cv2.cvtColor(
-                    image,
+                    image_array,
                     cv2.COLOR_RGB2GRAY
                 )
 
-                faces = cascade.detectMultiScale(
+                faces = face_cascade.detectMultiScale(
                     gray,
                     scaleFactor=1.1,
                     minNeighbors=5,
                     minSize=(30, 30)
                 )
 
-                result = image.copy()
+                result_image = image_array.copy()
 
                 for (x, y, w, h) in faces:
 
                     cv2.rectangle(
-                        result,
+                        result_image,
                         (x, y),
                         (x + w, y + h),
-                        (0, 200, 0),
-                        3
-                    )
-
-                    cv2.putText(
-                        result,
-                        "Face",
-                        (x, y - 10),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        0.8,
-                        (0, 200, 0),
+                        (0, 255, 0),
                         2
                     )
 
                 if len(faces) > 0:
 
-                    st.markdown(
-                        f"""
-                        <div class="success-box">
-                        <b>{len(faces)} face(s) detected!</b>
-                        </div>
-                        """,
-                        unsafe_allow_html=True
+                    st.success(
+                        f"{len(faces)} face(s) detected!"
                     )
 
                 else:
 
-                    st.warning("No face detected.")
+                    st.warning(
+                        "No face detected."
+                    )
 
                 st.image(
-                    result,
-                    caption="Viola-Jones Detection Result",
+                    result_image,
+                    caption="Viola-Jones Result",
                     width="stretch"
                 )
 
@@ -728,37 +405,23 @@ with tab3:
                 )
 
 
-# ============================================================
+# =========================================================
 # TAB 4 - DEEPFACE
-# ============================================================
+# =========================================================
 
 with tab4:
 
-    st.markdown(
-        '<div class="section-title">🧠 DeepFace</div>',
-        unsafe_allow_html=True
-    )
+    st.header("🧠 DeepFace Analysis")
 
-    st.markdown(
-        """
-        <div class="info-box">
-        <b>DeepFace</b> is a deep-learning framework for
-        facial analysis. It can perform face recognition,
-        age, gender and emotion analysis.
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    deepface_file = st.file_uploader(
-        "📤 Upload a face image",
+    uploaded_file = st.file_uploader(
+        "Upload a face image",
         type=["jpg", "jpeg", "png"],
         key="deepface_image"
     )
 
-    if deepface_file:
+    if uploaded_file:
 
-        image = image_to_array(deepface_file)
+        image = Image.open(uploaded_file).convert("RGB")
 
         st.image(
             image,
@@ -767,7 +430,7 @@ with tab4:
         )
 
         if st.button(
-            "🧠 Analyze Face",
+            "Analyze Face",
             key="deepface_button"
         ):
 
@@ -776,104 +439,272 @@ with tab4:
                 from deepface import DeepFace
                 import cv2
 
-                image_bytes = deepface_file.getvalue()
+                rgb_image = np.array(image)
 
-                img_array = np.frombuffer(
-                    image_bytes,
-                    np.uint8
+                bgr_image = cv2.cvtColor(
+                    rgb_image,
+                    cv2.COLOR_RGB2BGR
                 )
 
-                bgr_image = cv2.imdecode(
-                    img_array,
-                    cv2.IMREAD_COLOR
+                analysis = DeepFace.analyze(
+                    img_path=bgr_image,
+                    actions=[
+                        "age",
+                        "gender",
+                        "emotion"
+                    ],
+                    enforce_detection=False
                 )
 
-                with st.spinner(
-                    "DeepFace is analyzing the image..."
-                ):
+                if isinstance(analysis, list):
 
-                    result = DeepFace.analyze(
-                        img_path=bgr_image,
-                        actions=[
-                            "age",
-                            "gender",
-                            "emotion"
-                        ],
-                        enforce_detection=False
-                    )
+                    analysis = analysis[0]
 
-                if isinstance(result, list):
-                    analysis = result[0]
-                else:
-                    analysis = result
+                analysis = make_json_safe(analysis)
 
-                st.markdown("### 📊 Analysis Result")
+                # -----------------------------------------
+                # MAIN RESULTS
+                # -----------------------------------------
 
-                c1, c2, c3 = st.columns(3)
+                st.subheader("📊 Analysis Result")
 
-                with c1:
+                col1, col2, col3 = st.columns(3)
+
+                with col1:
+
                     st.metric(
                         "Age",
-                        str(analysis.get("age", "N/A"))
+                        analysis.get("age", "N/A")
                     )
 
-                with c2:
+                with col2:
+
                     st.metric(
                         "Gender",
-                        str(
-                            analysis.get(
-                                "dominant_gender",
-                                "N/A"
-                            )
+                        analysis.get(
+                            "dominant_gender",
+                            "N/A"
                         )
                     )
 
-                with c3:
+                with col3:
+
                     st.metric(
                         "Emotion",
-                        str(
-                            analysis.get(
-                                "dominant_emotion",
-                                "N/A"
-                            )
-                        )
+                        analysis.get(
+                            "dominant_emotion",
+                            "N/A"
+                        ).capitalize()
                     )
 
-                # ====================================================
-                # COMPLETE ANALYSIS - CLEAN JSON
-                # ====================================================
+                # -----------------------------------------
+                # COMPLETE ANALYSIS
+                # -----------------------------------------
 
-                with st.expander(
-                    "📋 View Complete Analysis"
+                if st.button(
+                    "View Complete Analysis",
+                    key="complete_analysis"
                 ):
 
-                    def make_json_safe(obj):
+                    clean_analysis = make_json_safe(
+                        analysis
+                    )
 
-                        if isinstance(obj, dict):
-                            return {
-                                str(key): make_json_safe(value)
-                                for key, value in obj.items()
-                            }
+                    st.markdown("""
+                    <style>
 
-                        if isinstance(obj, (list, tuple)):
-                            return [
-                                make_json_safe(value)
-                                for value in obj
-                            ]
+                    .analysis-box {
+                        background-color: white;
+                        color: #222222;
+                        padding: 20px;
+                        border-radius: 12px;
+                        border: 1px solid #dddddd;
+                        margin-top: 15px;
+                    }
 
-                        if isinstance(obj, np.ndarray):
-                            return obj.tolist()
+                    .analysis-box h3 {
+                        color: #222222 !important;
+                    }
 
-                        if isinstance(obj, np.generic):
-                            return obj.item()
+                    .analysis-item {
+                        color: #222222 !important;
+                        font-size: 16px;
+                        margin: 7px 0;
+                    }
 
-                        return obj
+                    </style>
+                    """, unsafe_allow_html=True)
 
-                    clean_analysis = make_json_safe(analysis)
+                    st.markdown(
+                        '<div class="analysis-box">',
+                        unsafe_allow_html=True
+                    )
 
-                    st.json(
-                        clean_analysis,
-                        expanded=True
+                    # -------------------------------------
+                    # FACE DETAILS
+                    # -------------------------------------
+
+                    st.markdown(
+                        "### 👤 Face Details"
+                    )
+
+                    st.markdown(
+                        f"""
+                        <div class="analysis-item">
+                        <b>Age:</b>
+                        {clean_analysis.get("age", "N/A")}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                    confidence = clean_analysis.get(
+                        "face_confidence",
+                        0
+                    )
+
+                    st.markdown(
+                        f"""
+                        <div class="analysis-item">
+                        <b>Face Confidence:</b>
+                        {confidence * 100:.2f}%
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                    st.markdown(
+                        f"""
+                        <div class="analysis-item">
+                        <b>Dominant Gender:</b>
+                        {clean_analysis.get(
+                            "dominant_gender",
+                            "N/A"
+                        )}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                    st.markdown(
+                        f"""
+                        <div class="analysis-item">
+                        <b>Dominant Emotion:</b>
+                        {clean_analysis.get(
+                            "dominant_emotion",
+                            "N/A"
+                        ).capitalize()}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                    # -------------------------------------
+                    # GENDER SCORES
+                    # -------------------------------------
+
+                    gender = clean_analysis.get(
+                        "gender",
+                        {}
+                    )
+
+                    st.markdown(
+                        "### 🚻 Gender Scores"
+                    )
+
+                    for name, score in gender.items():
+
+                        st.markdown(
+                            f"""
+                            <div class="analysis-item">
+                            <b>{name}:</b>
+                            {score:.2f}%
+                            </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
+
+                    # -------------------------------------
+                    # EMOTION SCORES
+                    # -------------------------------------
+
+                    emotion = clean_analysis.get(
+                        "emotion",
+                        {}
+                    )
+
+                    st.markdown(
+                        "### 😊 Emotion Scores"
+                    )
+
+                    for name, score in emotion.items():
+
+                        st.markdown(
+                            f"""
+                            <div class="analysis-item">
+                            <b>{name.capitalize()}:</b>
+                            {score:.2f}%
+                            </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
+
+                    # -------------------------------------
+                    # FACE REGION
+                    # -------------------------------------
+
+                    region = clean_analysis.get(
+                        "region",
+                        {}
+                    )
+
+                    st.markdown(
+                        "### 📍 Face Region"
+                    )
+
+                    st.markdown(
+                        f"""
+                        <div class="analysis-item">
+                        <b>X:</b>
+                        {region.get("x", "N/A")}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                    st.markdown(
+                        f"""
+                        <div class="analysis-item">
+                        <b>Y:</b>
+                        {region.get("y", "N/A")}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                    st.markdown(
+                        f"""
+                        <div class="analysis-item">
+                        <b>Width:</b>
+                        {region.get("w", "N/A")}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                    st.markdown(
+                        f"""
+                        <div class="analysis-item">
+                        <b>Height:</b>
+                        {region.get("h", "N/A")}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                    st.markdown(
+                        "</div>",
+                        unsafe_allow_html=True
                     )
 
             except Exception as e:
@@ -883,101 +714,83 @@ with tab4:
                 )
 
 
-# ============================================================
+# =========================================================
 # TAB 5 - FACENET
-# ============================================================
+# =========================================================
 
 with tab5:
 
-    st.markdown(
-        '<div class="section-title">🔐 FaceNet</div>',
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        """
-        <div class="info-box">
-        <b>FaceNet</b> converts a face into a numerical vector
-        called an embedding. Two embeddings can be compared
-        using similarity.
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    st.header("🔍 FaceNet Face Similarity")
 
     col1, col2 = st.columns(2)
 
     with col1:
 
-        face1 = st.file_uploader(
-            "📷 Upload Face 1",
+        image1_file = st.file_uploader(
+            "Upload First Face",
             type=["jpg", "jpeg", "png"],
-            key="facenet_face1"
+            key="facenet_image1"
         )
 
     with col2:
 
-        face2 = st.file_uploader(
-            "📷 Upload Face 2",
+        image2_file = st.file_uploader(
+            "Upload Second Face",
             type=["jpg", "jpeg", "png"],
-            key="facenet_face2"
+            key="facenet_image2"
         )
 
-    if face1 and face2:
+    if image1_file and image2_file:
 
-        image1 = image_to_array(face1)
-        image2 = image_to_array(face2)
+        image1 = Image.open(
+            image1_file
+        ).convert("RGB")
 
-        c1, c2 = st.columns(2)
+        image2 = Image.open(
+            image2_file
+        ).convert("RGB")
 
-        with c1:
+        col1, col2 = st.columns(2)
+
+        with col1:
+
             st.image(
                 image1,
-                caption="Face 1",
+                caption="First Face",
                 width="stretch"
             )
 
-        with c2:
+        with col2:
+
             st.image(
                 image2,
-                caption="Face 2",
+                caption="Second Face",
                 width="stretch"
             )
 
         if st.button(
-            "🔐 Compare Faces",
+            "Compare Faces",
             key="facenet_button"
         ):
 
             try:
 
-                with st.spinner(
-                    "FaceNet is creating embeddings..."
-                ):
+                embedder = load_facenet()
 
-                    embedder = load_facenet()
+                img1_array = np.array(image1)
+                img2_array = np.array(image2)
 
-                    img1 = image1.astype(np.uint8)
-                    img2 = image2.astype(np.uint8)
+                embedding1 = embedder.embeddings(
+                    [img1_array]
+                )[0]
 
-                    emb1 = embedder.embeddings(
-                        np.expand_dims(img1, axis=0)
-                    )[0]
+                embedding2 = embedder.embeddings(
+                    [img2_array]
+                )[0]
 
-                    emb2 = embedder.embeddings(
-                        np.expand_dims(img2, axis=0)
-                    )[0]
-
-                    similarity = cosine_similarity(
-                        emb1,
-                        emb2
-                    )
-
-                st.markdown(
-                    '<div class="success-box">'
-                    '<b>Face comparison completed!</b>'
-                    '</div>',
-                    unsafe_allow_html=True
+                similarity = cosine_similarity(
+                    embedding1,
+                    embedding2
                 )
 
                 st.metric(
@@ -988,13 +801,13 @@ with tab5:
                 if similarity >= 0.70:
 
                     st.success(
-                        "😊 The faces are relatively similar."
+                        "High similarity - Faces are likely the same."
                     )
 
                 else:
 
                     st.warning(
-                        "🙂 The faces appear less similar."
+                        "Low similarity - Faces are likely different."
                     )
 
             except Exception as e:
@@ -1002,26 +815,3 @@ with tab5:
                 st.error(
                     f"FaceNet comparison failed: {e}"
                 )
-
-
-# ============================================================
-# FOOTER
-# ============================================================
-
-st.markdown("---")
-
-st.markdown(
-    """
-    <div style="
-        text-align:center;
-        color:#627d98;
-        font-size:14px;
-        padding:15px;
-    ">
-        🤖 AI Face Detection & Recognition Studio
-        <br>
-        Image & Video Analytics Assignment
-    </div>
-    """,
-    unsafe_allow_html=True
-)
