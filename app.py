@@ -86,8 +86,10 @@ def load_haar_cascade():
                 "CascadeClassifier is not available."
             )
 
-        cascade_path = cv2.data.haarcascades + \
-            "haarcascade_frontalface_default.xml"
+        cascade_path = (
+            cv2.data.haarcascades
+            + "haarcascade_frontalface_default.xml"
+        )
 
         cascade = cv2.CascadeClassifier(cascade_path)
 
@@ -246,11 +248,13 @@ with tab2:
     if image_file and template_file:
 
         main_image = Image.open(image_file)
+
         template_image = Image.open(template_file)
 
         col1, col2 = st.columns(2)
 
         with col1:
+
             st.image(
                 main_image,
                 caption="Main Image",
@@ -258,6 +262,7 @@ with tab2:
             )
 
         with col2:
+
             st.image(
                 template_image,
                 caption="Template Image",
@@ -302,7 +307,7 @@ with tab2:
                 )
 
                 st.success(
-                    f"Template matching completed!"
+                    "Template matching completed!"
                 )
 
                 st.metric(
@@ -337,7 +342,9 @@ with tab3:
 
     if uploaded_file:
 
-        image = Image.open(uploaded_file).convert("RGB")
+        image = Image.open(
+            uploaded_file
+        ).convert("RGB")
 
         st.image(
             image,
@@ -421,13 +428,19 @@ with tab4:
 
     if uploaded_file:
 
-        image = Image.open(uploaded_file).convert("RGB")
+        image = Image.open(
+            uploaded_file
+        ).convert("RGB")
 
         st.image(
             image,
             caption="Uploaded Face",
             width="stretch"
         )
+
+        # -------------------------------------------------
+        # ANALYZE FACE
+        # -------------------------------------------------
 
         if st.button(
             "Analyze Face",
@@ -457,260 +470,275 @@ with tab4:
                 )
 
                 if isinstance(analysis, list):
-
                     analysis = analysis[0]
 
-                analysis = make_json_safe(analysis)
+                # Convert NumPy values
+                # into normal Python values
+                analysis = make_json_safe(
+                    analysis
+                )
 
-                # -----------------------------------------
-                # MAIN RESULTS
-                # -----------------------------------------
-
-                st.subheader("📊 Analysis Result")
-
-                col1, col2, col3 = st.columns(3)
-
-                with col1:
-
-                    st.metric(
-                        "Age",
-                        analysis.get("age", "N/A")
-                    )
-
-                with col2:
-
-                    st.metric(
-                        "Gender",
-                        analysis.get(
-                            "dominant_gender",
-                            "N/A"
-                        )
-                    )
-
-                with col3:
-
-                    st.metric(
-                        "Emotion",
-                        analysis.get(
-                            "dominant_emotion",
-                            "N/A"
-                        ).capitalize()
-                    )
-
-                # -----------------------------------------
-                # COMPLETE ANALYSIS
-                # -----------------------------------------
-
-                if st.button(
-                    "View Complete Analysis",
-                    key="complete_analysis"
-                ):
-
-                    clean_analysis = make_json_safe(
-                        analysis
-                    )
-
-                    st.markdown("""
-                    <style>
-
-                    .analysis-box {
-                        background-color: white;
-                        color: #222222;
-                        padding: 20px;
-                        border-radius: 12px;
-                        border: 1px solid #dddddd;
-                        margin-top: 15px;
-                    }
-
-                    .analysis-box h3 {
-                        color: #222222 !important;
-                    }
-
-                    .analysis-item {
-                        color: #222222 !important;
-                        font-size: 16px;
-                        margin: 7px 0;
-                    }
-
-                    </style>
-                    """, unsafe_allow_html=True)
-
-                    st.markdown(
-                        '<div class="analysis-box">',
-                        unsafe_allow_html=True
-                    )
-
-                    # -------------------------------------
-                    # FACE DETAILS
-                    # -------------------------------------
-
-                    st.markdown(
-                        "### 👤 Face Details"
-                    )
-
-                    st.markdown(
-                        f"""
-                        <div class="analysis-item">
-                        <b>Age:</b>
-                        {clean_analysis.get("age", "N/A")}
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-
-                    confidence = clean_analysis.get(
-                        "face_confidence",
-                        0
-                    )
-
-                    st.markdown(
-                        f"""
-                        <div class="analysis-item">
-                        <b>Face Confidence:</b>
-                        {confidence * 100:.2f}%
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-
-                    st.markdown(
-                        f"""
-                        <div class="analysis-item">
-                        <b>Dominant Gender:</b>
-                        {clean_analysis.get(
-                            "dominant_gender",
-                            "N/A"
-                        )}
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-
-                    st.markdown(
-                        f"""
-                        <div class="analysis-item">
-                        <b>Dominant Emotion:</b>
-                        {clean_analysis.get(
-                            "dominant_emotion",
-                            "N/A"
-                        ).capitalize()}
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-
-                    # -------------------------------------
-                    # GENDER SCORES
-                    # -------------------------------------
-
-                    gender = clean_analysis.get(
-                        "gender",
-                        {}
-                    )
-
-                    st.markdown(
-                        "### 🚻 Gender Scores"
-                    )
-
-                    for name, score in gender.items():
-
-                        st.markdown(
-                            f"""
-                            <div class="analysis-item">
-                            <b>{name}:</b>
-                            {score:.2f}%
-                            </div>
-                            """,
-                            unsafe_allow_html=True
-                        )
-
-                    # -------------------------------------
-                    # EMOTION SCORES
-                    # -------------------------------------
-
-                    emotion = clean_analysis.get(
-                        "emotion",
-                        {}
-                    )
-
-                    st.markdown(
-                        "### 😊 Emotion Scores"
-                    )
-
-                    for name, score in emotion.items():
-
-                        st.markdown(
-                            f"""
-                            <div class="analysis-item">
-                            <b>{name.capitalize()}:</b>
-                            {score:.2f}%
-                            </div>
-                            """,
-                            unsafe_allow_html=True
-                        )
-
-                    # -------------------------------------
-                    # FACE REGION
-                    # -------------------------------------
-
-                    region = clean_analysis.get(
-                        "region",
-                        {}
-                    )
-
-                    st.markdown(
-                        "### 📍 Face Region"
-                    )
-
-                    st.markdown(
-                        f"""
-                        <div class="analysis-item">
-                        <b>X:</b>
-                        {region.get("x", "N/A")}
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-
-                    st.markdown(
-                        f"""
-                        <div class="analysis-item">
-                        <b>Y:</b>
-                        {region.get("y", "N/A")}
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-
-                    st.markdown(
-                        f"""
-                        <div class="analysis-item">
-                        <b>Width:</b>
-                        {region.get("w", "N/A")}
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-
-                    st.markdown(
-                        f"""
-                        <div class="analysis-item">
-                        <b>Height:</b>
-                        {region.get("h", "N/A")}
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-
-                    st.markdown(
-                        "</div>",
-                        unsafe_allow_html=True
-                    )
+                # IMPORTANT:
+                # Save analysis so it survives
+                # Streamlit reruns
+                st.session_state[
+                    "deepface_analysis"
+                ] = analysis
 
             except Exception as e:
 
                 st.error(
                     f"DeepFace analysis failed: {e}"
+                )
+
+        # -------------------------------------------------
+        # DISPLAY SAVED ANALYSIS
+        # -------------------------------------------------
+
+        if "deepface_analysis" in st.session_state:
+
+            analysis = st.session_state[
+                "deepface_analysis"
+            ]
+
+            st.subheader("📊 Analysis Result")
+
+            col1, col2, col3 = st.columns(3)
+
+            with col1:
+
+                st.metric(
+                    "Age",
+                    analysis.get(
+                        "age",
+                        "N/A"
+                    )
+                )
+
+            with col2:
+
+                st.metric(
+                    "Gender",
+                    analysis.get(
+                        "dominant_gender",
+                        "N/A"
+                    )
+                )
+
+            with col3:
+
+                st.metric(
+                    "Emotion",
+                    analysis.get(
+                        "dominant_emotion",
+                        "N/A"
+                    ).capitalize()
+                )
+
+            # -------------------------------------------------
+            # VIEW COMPLETE ANALYSIS
+            # -------------------------------------------------
+
+            if st.button(
+                "View Complete Analysis",
+                key="complete_analysis"
+            ):
+
+                st.markdown("""
+                <style>
+
+                .analysis-box {
+                    background-color: white;
+                    color: #222222;
+                    padding: 20px;
+                    border-radius: 12px;
+                    border: 1px solid #dddddd;
+                    margin-top: 15px;
+                }
+
+                .analysis-box h3 {
+                    color: #222222 !important;
+                }
+
+                .analysis-item {
+                    color: #222222 !important;
+                    font-size: 16px;
+                    margin: 7px 0;
+                }
+
+                </style>
+                """, unsafe_allow_html=True)
+
+                st.markdown(
+                    '<div class="analysis-box">',
+                    unsafe_allow_html=True
+                )
+
+                # =========================================
+                # FACE DETAILS
+                # =========================================
+
+                st.markdown(
+                    "### 👤 Face Details"
+                )
+
+                st.markdown(
+                    f"""
+                    <div class="analysis-item">
+                    <b>Age:</b>
+                    {analysis.get("age", "N/A")}
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+                confidence = analysis.get(
+                    "face_confidence",
+                    0
+                )
+
+                st.markdown(
+                    f"""
+                    <div class="analysis-item">
+                    <b>Face Confidence:</b>
+                    {confidence * 100:.2f}%
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+                st.markdown(
+                    f"""
+                    <div class="analysis-item">
+                    <b>Dominant Gender:</b>
+                    {analysis.get(
+                        "dominant_gender",
+                        "N/A"
+                    )}
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+                st.markdown(
+                    f"""
+                    <div class="analysis-item">
+                    <b>Dominant Emotion:</b>
+                    {analysis.get(
+                        "dominant_emotion",
+                        "N/A"
+                    ).capitalize()}
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+                # =========================================
+                # GENDER SCORES
+                # =========================================
+
+                gender = analysis.get(
+                    "gender",
+                    {}
+                )
+
+                st.markdown(
+                    "### 🚻 Gender Scores"
+                )
+
+                for name, score in gender.items():
+
+                    st.markdown(
+                        f"""
+                        <div class="analysis-item">
+                        <b>{name}:</b>
+                        {score:.2f}%
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                # =========================================
+                # EMOTION SCORES
+                # =========================================
+
+                emotion = analysis.get(
+                    "emotion",
+                    {}
+                )
+
+                st.markdown(
+                    "### 😊 Emotion Scores"
+                )
+
+                for name, score in emotion.items():
+
+                    st.markdown(
+                        f"""
+                        <div class="analysis-item">
+                        <b>{name.capitalize()}:</b>
+                        {score:.2f}%
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                # =========================================
+                # FACE REGION
+                # =========================================
+
+                region = analysis.get(
+                    "region",
+                    {}
+                )
+
+                st.markdown(
+                    "### 📍 Face Region"
+                )
+
+                st.markdown(
+                    f"""
+                    <div class="analysis-item">
+                    <b>X:</b>
+                    {region.get("x", "N/A")}
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+                st.markdown(
+                    f"""
+                    <div class="analysis-item">
+                    <b>Y:</b>
+                    {region.get("y", "N/A")}
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+                st.markdown(
+                    f"""
+                    <div class="analysis-item">
+                    <b>Width:</b>
+                    {region.get("w", "N/A")}
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+                st.markdown(
+                    f"""
+                    <div class="analysis-item">
+                    <b>Height:</b>
+                    {region.get("h", "N/A")}
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+                st.markdown(
+                    "</div>",
+                    unsafe_allow_html=True
                 )
 
 
@@ -778,6 +806,7 @@ with tab5:
                 embedder = load_facenet()
 
                 img1_array = np.array(image1)
+
                 img2_array = np.array(image2)
 
                 embedding1 = embedder.embeddings(
@@ -801,13 +830,15 @@ with tab5:
                 if similarity >= 0.70:
 
                     st.success(
-                        "High similarity - Faces are likely the same."
+                        "High similarity - "
+                        "Faces are likely the same."
                     )
 
                 else:
 
                     st.warning(
-                        "Low similarity - Faces are likely different."
+                        "Low similarity - "
+                        "Faces are likely different."
                     )
 
             except Exception as e:
