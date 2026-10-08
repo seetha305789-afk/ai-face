@@ -1,27 +1,24 @@
-# AI Face Detection & Recognition Studio
+# 🤖 AI Face Detection & Recognition Studio
 
-This is a comprehensive, single-file Streamlit web application that demonstrates four distinct computer vision techniques for face detection and recognition.
+AI Face Detection & Recognition Studio is a Streamlit-based Image & Video Analytics application that demonstrates different computer vision and deep learning techniques for face detection, analysis, and recognition.
 
-## Features
-- **Template Matching**: Localize objects using OpenCV correlation.
-- **Viola-Jones**: Fast, traditional face detection using Haar Cascades.
-- **DeepFace**: Advanced face attribute analysis (age, gender, emotion).
-- **FaceNet**: Deep learning-based face verification using embeddings.
+## ✨ Features
 
-## Technologies Used
-- Python 3.10/3.11
-- Streamlit (UI)
-- OpenCV (Image processing & Viola-Jones)
-- DeepFace (Analysis)
-- Keras-FaceNet (Embeddings)
+- 🎯 **Template Matching** – Finds and localizes similar regions in an image using OpenCV.
+- 👁️ **Viola-Jones** – Detects faces using the Haar Cascade classifier.
+- 🧠 **DeepFace** – Analyzes facial attributes such as age, gender, and emotion.
+- 🔍 **FaceNet** – Compares faces using deep-learning-based face embeddings.
 
-## Installation & Running
-1. Open terminal in the project folder.
-2. `python -m venv venv`
-3. `venv\Scripts\activate`
-4. `pip install -r requirements.txt`
-5. `streamlit run app.py`
+## 🛠️ Technologies Used
 
-## Troubleshooting
-- If DeepFace fails, ensure you have an active internet connection on the first run, as it automatically downloads pre-trained models.
-- If you see "No Face Detected", ensure your uploaded images are high quality and faces are clearly visible.
+Python • Streamlit • OpenCV • DeepFace • FaceNet • TensorFlow • NumPy
+
+## 🚀 Live Demo
+
+👉 **[Click Here to Open AI Face Studio](https://ai-face-jxldr9rkj7rwswk8mb9sgu.streamlit.app/)**
+
+## ▶️ Run Locally
+
+```bash
+pip install -r requirements.txt
+streamlit run app.py
